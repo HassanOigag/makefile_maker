@@ -17,13 +17,15 @@ if [ -e $NAME ];then
     else
         OVERRIDE=0
     fi
+else
+    touch $NAME
+    OVERRIDE=1
 fi
 
-touch Makefile
 if (($OVERRIDE == 1)); then
     echo "CC = cc" > Makefile
 else
-    echo "original Makefile was not overidden"
+    echo "makefile not overriden"
     exit 0
 fi
 
