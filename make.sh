@@ -2,6 +2,12 @@
 NAME=Makefile
 OVERRIDE=0
 ANSWER=""
+EXEC="a.out"
+
+if [ $# -eq 1 ];then
+    EXEC=$1
+fi
+
 echo "creating a generic makefile..."
 if [ -e $NAME ];then
     echo "$NAME already exists"
@@ -30,8 +36,8 @@ else
 fi
 
 echo "CFLAGS = -Wall -Werror -Wextra" >> $NAME
-echo "NAME = a.out" >> $NAME
-echo "SRCS = *.c" >> $NAME
+echo "NAME = $EXEC" >> $NAME
+echo "SRCS = \$(wildcard *.c)" >> $NAME
 echo "OBJS = \$(SRCS:.c=.o)" >> $NAME
 echo "" >> $NAME
 echo "%.o: %.c" >> $NAME
