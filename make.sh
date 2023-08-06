@@ -3,9 +3,18 @@ NAME=Makefile
 OVERRIDE=0
 ANSWER=""
 EXEC="a.out"
+COMPILER="cc"
+EXSTENTION="c"
+LANGUAGE=1
+
 
 if [ $# -eq 1 ];then
     EXEC=$1
+fi
+
+if [ $# -eq 2 ];then
+    EXEC=$1
+    LANGUAGE=2
 fi
 
 echo "creating a generic makefile..."
@@ -28,8 +37,13 @@ else
     OVERRIDE=1
 fi
 
+if [ $LANGUAGE -eq 2 ]; then
+    EXSTENTION="cpp"
+    COMPILER="c++"
+fi
+
 if (($OVERRIDE == 1)); then
-    echo "CC = cc" > Makefile
+    echo "CC = $COMPILER" > Makefile
 else
     echo "makefile not overriden"
     exit 0
@@ -37,10 +51,10 @@ fi
 
 echo "CFLAGS = -Wall -Werror -Wextra" >> $NAME
 echo "NAME = $EXEC" >> $NAME
-echo "SRCS = \$(wildcard *.c)" >> $NAME
-echo "OBJS = \$(SRCS:.c=.o)" >> $NAME
+echo "SRCS = \$(wildcard *.$EXSTENTION)" >> $NAME
+echo "OBJS = \$(SRCS:.$EXSTENTION=.o)" >> $NAME
 echo "" >> $NAME
-echo "%.o: %.c" >> $NAME
+echo "%.o: %.$EXSTENTION" >> $NAME
 echo -e "\t\$(CC) \$(CFLAGS) -c \$^" >> $NAME
 echo "" >> $NAME
 echo "all: \$(NAME)" >> $NAME
