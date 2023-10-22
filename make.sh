@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 NAME=Makefile
 OVERRIDE=0
 ANSWER=""
@@ -6,7 +6,15 @@ EXEC="a.out"
 COMPILER="cc"
 EXSTENTION="c"
 LANGUAGE=1
+SRCS=$(ls *.c | tr "\n" " ")
+USAGE="makefile [output_file] [c/c++]"
 
+if [ $# -eq 1 ];then
+	if [ "$1" == "help" ];then
+		echo $USAGE
+		exit 0
+	fi
+fi
 
 if [ $# -eq 1 ];then
     EXEC=$1
@@ -39,6 +47,7 @@ fi
 
 if [ $LANGUAGE -eq 2 ]; then
     EXSTENTION="cpp"
+    SRCS=$(ls *.$EXSTENTION | tr "\n" " " )
     COMPILER="c++"
 fi
 
@@ -49,9 +58,9 @@ else
     exit 0
 fi
 
-echo "CFLAGS = -Wall -Werror -Wextra" >> $NAME
+echo "CFLAGS = -Wall -Werror -Wextra -std=c++98" >> $NAME
 echo "NAME = $EXEC" >> $NAME
-echo "SRCS = \$(wildcard *.$EXSTENTION)" >> $NAME
+echo "SRCS = $SRCS" >> $NAME
 echo "OBJS = \$(SRCS:.$EXSTENTION=.o)" >> $NAME
 echo "" >> $NAME
 echo "%.o: %.$EXSTENTION" >> $NAME
