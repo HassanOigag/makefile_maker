@@ -3,11 +3,14 @@ import os
 
 makefile = "Makefile"
 if __name__ == "__main__":
-
+    usage = f"python3 {__file__} [output_file_name] [c/cpp]"
     output_file_name = "a.out"
     language = "c"
     if len(argv) == 2:
         output_file_name = argv[1]
+        if (output_file_name == "help"):
+            print(usage)
+            exit(0)
     if len(argv) > 2:
         output_file_name = argv[1]
         language = argv[2]
