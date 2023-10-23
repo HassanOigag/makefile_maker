@@ -1,7 +1,15 @@
 from sys import argv, exit
 import os
 
+red = "\033[31m"
+green = "\033[32m"
+reset = "\033[0m"
+
 makefile = "Makefile"
+
+def colored_print(text, color):
+    print(f"{color}{text}{reset}")
+
 if __name__ == "__main__":
     usage = f"python3 {__file__} [output_file_name] [c/cpp]"
     output_file_name = "a.out"
@@ -19,7 +27,7 @@ if __name__ == "__main__":
     if len(language) == 0:
         language = "c"
     if language not in ["c", "cpp", "c++", "C", "C++", "CPP"]:
-        print(f"{language} is not supported")
+        colored_print(f"{language} is not supported", red)
         exit(1)
     if language in ["c", "C"]:
         compiler = "cc"
@@ -30,16 +38,19 @@ if __name__ == "__main__":
 
     additional_flag = "-std=c++98" if compiler == "c++" else ""
     if os.path.exists(makefile):
-        print(f"Makefile already exists")
+        colored_print(f"Makefile already exists", red)
         while True:
-            answer = input("Do you want to overwrite it? [y/n]: ")
-            if answer not in ["y", "n"]:
-                continue
-            elif answer == "y":
-                break
-            else:
+            try:
+                answer = input("Do you want to overwrite it? [y/n]: ")
+                if answer not in ["y", "n"]:
+                    continue
+                elif answer == "y":
+                    break
+                else:
+                    colored_print(f"{makefile} was not created", red)
+                    exit(0)
+            except (KeyboardInterrupt, EOFError):
                 exit(0)
-    
     all_files = [f for f in os.listdir() if os.path.isfile(f) and f.endswith(file_extension)]
     srcs = " ".join(all_files)
     print("creating Makefile...")
@@ -58,4 +69,4 @@ if __name__ == "__main__":
         f.write(f"\trm -f $(NAME)\n\n")
         f.write(f"re: fclean all\n\n")
         f.write(f".PHONY: all clean fclean re\n")
-    print(f"created: {makefile} successfully")
+    colored_print(f"created: {makefile} successfully", green)
