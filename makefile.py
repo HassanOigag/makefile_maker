@@ -55,14 +55,16 @@ if __name__ == "__main__":
     srcs = " ".join(all_files)
     print("creating Makefile...")
     with open(makefile, "w") as f:
-        f.write(f"CC = {compiler}\n\n")
-        f.write(f"CFLAGS = -Wall -Wextra -Werror {additional_flag}\n\n")
+        flags = 'CFLAGS' if compiler == 'cc' else 'CXXFLAGS'
+        cmpl = 'CC' if compiler == 'cc' else 'CXX'
+        f.write(f"{cmpl} = {compiler}\n\n")
+        f.write(f"{flags} = -Wall -Wextra -Werror {additional_flag}\n\n")
         f.write(f"NAME = {output_file_name}\n\n")
         f.write(f"SRCS = {srcs}\n\n")
         f.write(f"OBJS = $(SRCS:{file_extension}=.o)\n\n")
         f.write(f"all: $(NAME)\n\n")
         f.write(f"$(NAME): $(OBJS)\n")
-        f.write(f"\t$(CC) $(CFLAGS) $(OBJS) -o $(NAME)\n\n")
+        f.write(f"\t$({cmpl}) $({flags}) $(OBJS) -o $(NAME)\n\n")
         f.write(f"clean:\n")
         f.write(f"\trm -f $(OBJS)\n\n")
         f.write(f"fclean: clean\n")
