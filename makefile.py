@@ -7,8 +7,52 @@ reset = "\033[0m"
 
 makefile = "Makefile"
 
+def parse_line(new_files, compiler):
+    file_extension = ".cpp" if compiler == "c++" else ".c"
+    valid_files = [file for file in new_files if file.endswith(file_extension)]
+    updated_files = []
+    for valid_file in valid_files:
+        if not os.path.exists(valid_file):
+            colored_print(f"{valid_file} does not exist", red)
+        else:
+            updated_files.append(valid_file)
+    return updated_files
+
+def update_makefile(new_files):
+    lines = []
+    compiler = ""
+    with open(makefile, 'r') as f:
+        for line in f.readlines():
+            if line.startswith(("CC =", "CXX =", "CXX=", "CC=")):
+                compiler = line.split("=")[1].strip()
+            if line.startswith("SRCS"):
+                current_files_str = line.split("=")[1]
+                current_files = current_files_str.split()
+                updated_files = parse_line(new_files, compiler)
+                for file in updated_files:
+                    if file not in current_files:
+                        current_files.append(file) 
+                new_line = f"SRCS = {' '.join(current_files)}\n"
+                lines.append(new_line)
+            else:
+                lines.append(line)
+    return lines
+
 def colored_print(text, color):
     print(f"{color}{text}{reset}")
+
+def add_files(old_files):
+    if not os.path.exists(makefile):
+        colored_print("Makefile does not exist", red)
+        exit(1)
+    if not old_files:
+        colored_print("please provide source files", red)
+        exit(1)
+    update = update_makefile(old_files)
+    with open(makefile, "w") as f:
+        for line in update:
+            f.write(line)
+    exit(0)
 
 if __name__ == "__main__":
     usage = f"python3 {__file__} [output_file_name] [c/cpp]"
@@ -19,8 +63,12 @@ if __name__ == "__main__":
         if (output_file_name == "help"):
             print(usage)
             exit(0)
+        if (output_file_name == "add"):
+            add_files(argv[2:])
     if len(argv) > 2:
         output_file_name = argv[1]
+        if (output_file_name == "add"):
+            add_files(argv[2:])
         language = argv[2]
     if len(output_file_name) == 0:
         output_file_name = "a.out"
