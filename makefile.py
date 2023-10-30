@@ -100,6 +100,9 @@ if __name__ == "__main__":
             except (KeyboardInterrupt, EOFError):
                 exit(0)
     all_files = [f for f in os.listdir() if os.path.isfile(f) and f.endswith(file_extension)]
+    header_file_ext = ".hpp" if compiler == "c++" else ".h"
+    header_files = [f for f in os.listdir() if os.path.isfile(f) and f.endswith(header_file_ext)]
+    headers = " ".join(header_files)
     srcs = " ".join(all_files)
     print("creating Makefile...")
     with open(makefile, "w") as f:
@@ -109,11 +112,12 @@ if __name__ == "__main__":
         f.write(f"{flags} = -Wall -Wextra -Werror {additional_flag}\n\n")
         f.write(f"NAME = {output_file_name}\n\n")
         f.write(f"SRCS = {srcs}\n\n")
+        f.write(f"HEADERS = {headers}\n\n")
         f.write(f"OBJS = $(SRCS:{file_extension}=.o)\n\n")
         f.write(f"all: $(NAME)\n\n")
-        f.write(f"%.o: %{file_extension}\n")
+        f.write(f"%.o: %{file_extension} $(HEADERS)\n")
         f.write(f"\t$({cmpl}) $({flags}) -c $< -o $@\n\n")
-        f.write(f"$(NAME): $(OBJS)\n")
+        f.write(f"$(NAME): $(OBJS) $(HEADERS)\n")
         f.write(f"\t$({cmpl}) $({flags}) $(OBJS) -o $(NAME)\n\n")
         f.write(f"clean:\n")
         f.write(f"\trm -f $(OBJS)\n\n")
