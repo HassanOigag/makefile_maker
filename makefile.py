@@ -57,7 +57,7 @@ def add_files(old_files):
 if __name__ == "__main__":
     usage = f"python3 {__file__} [output_file_name] [c/cpp]"
     output_file_name = "a.out"
-    language = "c"
+    language = "cpp"
     if len(argv) == 2:
         output_file_name = argv[1]
         if (output_file_name == "help"):
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     if len(output_file_name) == 0:
         output_file_name = "a.out"
     if len(language) == 0:
-        language = "c"
+        language = "cpp"
     if language not in ["c", "cpp", "c++", "C", "C++", "CPP"]:
         colored_print(f"{language} is not supported", red)
         exit(1)
